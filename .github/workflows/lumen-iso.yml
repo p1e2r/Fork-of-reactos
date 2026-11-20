@@ -59,7 +59,7 @@ jobs:
     - name: Configure problem matchers
       run: echo ::add-matcher::src/.github/workflows/problem-matcher.json
     - name: Configure
-      run: echo 'cmake -S ${{github.workspace}}/src -B ${{github.workspace}}/build -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-gcc.cmake -DARCH:STRING=${{matrix.arch}} -DCMAKE_BUILD_TYPE=Release -DENABLE_CCACHE=1' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
+      run: echo 'cmake -S ${{github.workspace}}/src -B ${{github.workspace}}/build -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-gcc.cmake -DARCH:STRING=${{matrix.arch}} -DCMAKE_BUILD_TYPE=Release -DDLL_EXPORT_VERSION=0x600 -DENABLE_CCACHE=1' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
     - name: Build
       run: set -o pipefail && echo 'cmake --build ${{github.workspace}}/build -- -k0' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}} 2>&1 | sed 's|^\.\./src/|${{github.workspace}}/src/|'
     - name: Generate ISOs

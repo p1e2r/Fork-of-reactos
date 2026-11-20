@@ -678,23 +678,57 @@ CreateTrayIcon(LPTSTR szKLID, LPCTSTR szImeFile OPTIONAL)
     SetRect(&rect, 0, 0, cxIcon, cyIcon);
 
     /* Lumen: plain text on a transparent background (no colored box), drawn in
-       the button text color so it follows the taskbar's light or dark look */
+       the button text color so it follows the taskbar's light or dark look.
+       The text is rendered white-on-black into a 32-bit DIB, then turned into
+       an alpha channel. */
+    {
+        BITMAPINFO bmi;
+        PDWORD pBits = NULL;
+        HBITMAP hbmAlpha;
+        COLORREF clrText = GetSysColor(COLOR_BTNTEXT);
+        INT i;
 
-    /* Draw hbmColor: black where transparent, text color where the letters are */
-    hBmpOld = SelectObject(hdc, hbmColor);
-    PatBlt(hdc, 0, 0, cxIcon, cyIcon, BLACKNESS);
-    hFontOld = SelectObject(hdc, hFont);
-    SetTextColor(hdc, GetSysColor(COLOR_BTNTEXT));
-    SetBkMode(hdc, TRANSPARENT);
-    DrawText(hdc, szBuf, 2, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+        ZeroMemory(&bmi, sizeof(bmi));
+        bmi.bmiHeader.biSize = sizeof(bmi.bmiHeader);
+        bmi.bmiHeader.biWidth = cxIcon;
+        bmi.bmiHeader.biHeight = -cyIcon;
+        bmi.bmiHeader.biPlanes = 1;
+        bmi.bmiHeader.biBitCount = 32;
+        bmi.bmiHeader.biCompression = BI_RGB;
+        hbmAlpha = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, (PVOID *)&pBits, NULL, 0);
+        if (hbmAlpha && pBits)
+        {
+            DeleteObject(hbmColor);
+            hbmColor = hbmAlpha;
+        }
 
-    /* Draw hbmMono: white (transparent) everywhere except the letters */
-    SelectObject(hdc, hbmMono);
-    PatBlt(hdc, 0, 0, cxIcon, cyIcon, WHITENESS);
-    SetTextColor(hdc, RGB(0, 0, 0));
-    DrawText(hdc, szBuf, 2, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-    SelectObject(hdc, hFontOld);
-    SelectObject(hdc, hBmpOld);
+        hBmpOld = SelectObject(hdc, hbmColor);
+        PatBlt(hdc, 0, 0, cxIcon, cyIcon, BLACKNESS);
+        hFontOld = SelectObject(hdc, hFont);
+        SetTextColor(hdc, RGB(255, 255, 255));
+        SetBkMode(hdc, TRANSPARENT);
+        DrawText(hdc, szBuf, 2, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+        SelectObject(hdc, hFontOld);
+        GdiFlush();
+
+        if (hbmColor == hbmAlpha)
+        {
+            for (i = 0; i < cxIcon * cyIcon; i++)
+            {
+                DWORD px = pBits[i];
+                BYTE a = (BYTE)max(max(GetRValue(px), GetGValue(px)), GetBValue(px));
+                pBits[i] = ((DWORD)a << 24) |
+                           ((DWORD)GetRValue(clrText) << 16) |
+                           ((DWORD)GetGValue(clrText) << 8) |
+                           (DWORD)GetBValue(clrText);
+            }
+        }
+
+        /* Opaque mask: transparency comes from the alpha channel */
+        SelectObject(hdc, hbmMono);
+        PatBlt(hdc, 0, 0, cxIcon, cyIcon, BLACKNESS);
+        SelectObject(hdc, hBmpOld);
+    }
 
     /* Create an icon from hbmColor and hbmMono */
     IconInfo.fIcon = TRUE;
