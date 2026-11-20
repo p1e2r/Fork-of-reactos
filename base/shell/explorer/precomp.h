@@ -252,6 +252,13 @@ struct TaskbarSettings
 extern TaskbarSettings g_TaskbarSettings;
 
 /*
+ * lumenstart.cpp (Lumen: Windows 11-style start menu)
+ */
+BOOL LumenStart_IsVisible(VOID);
+VOID LumenStart_Hide(VOID);
+VOID LumenStart_Toggle(HWND hwndTray, const RECT *prcStartButton, BOOL bTaskbarAtTop);
+
+/*
  * shellservice.cpp
  */
 HRESULT InitShellServices(HDPA * phdpa);

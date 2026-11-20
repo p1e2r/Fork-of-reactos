@@ -166,6 +166,16 @@ static BOOL CALLBACK ThemeCleanupWndContext(HWND hWnd, LPARAM msg)
     return TRUE;
 }
 
+static BOOL IsLumenThemeActive(void)
+{
+    WCHAR szTheme[MAX_PATH];
+
+    if (FAILED(GetCurrentThemeName(szTheme, ARRAYSIZE(szTheme), NULL, 0, NULL, 0)))
+        return FALSE;
+    _wcslwr(szTheme);
+    return wcsstr(szTheme, L"lumen.msstyles") != NULL;
+}
+
 void SetThemeRegion(HWND hWnd)
 {
     HTHEME hTheme;
@@ -211,6 +221,14 @@ void SetThemeRegion(HWND hWnd)
     CombineRgn(hrgn, hrgn, hrgn1, RGN_OR );
 
     DeleteObject(hrgn1);
+
+    /* Lumen: Windows 11-style rounded corners on all four corners of normal
+       (not maximized or minimized) windows */
+    if ((iPart == WP_CAPTION || iPart == WP_SMALLCAPTION) && IsLumenThemeActive())
+    {
+        DeleteObject(hrgn);
+        hrgn = CreateRoundRectRgn(0, 0, rcWindow.right + 1, rcWindow.bottom + 1, 16, 16);
+    }
 
     g_user32ApiHook.SetWindowRgn(hWnd, hrgn, TRUE);
 }

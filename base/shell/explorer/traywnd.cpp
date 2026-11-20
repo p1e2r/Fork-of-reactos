@@ -752,7 +752,21 @@ public:
 
     VOID HideStartMenu()
     {
+        LumenStart_Hide();
         m_StartMenuPopup->OnSelect(MPOS_CANCELLEVEL);
+    }
+
+    /* Lumen: the centered taskbar uses the Windows 11-style start menu */
+    BOOL UseLumenStart()
+    {
+        return g_TaskbarSettings.bCenterTaskbar && (m_Position == ABE_BOTTOM || m_Position == ABE_TOP);
+    }
+
+    VOID ToggleLumenStart()
+    {
+        RECT rc;
+        m_StartButton.GetWindowRect(&rc);
+        LumenStart_Toggle(m_hWnd, &rc, m_Position == ABE_TOP);
     }
 
     VOID ShowFolder(INT csidl, BOOL bExplore)
@@ -1958,6 +1972,12 @@ ChangePos:
 
     void PopupStartMenu()
     {
+        if (UseLumenStart())
+        {
+            ToggleLumenStart();
+            return;
+        }
+
         if (m_StartMenuPopup != NULL)
         {
             POINTL pt;
@@ -3147,6 +3167,12 @@ HandleTrayContextMenu:
 
     LRESULT OnOpenStartMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
     {
+        if (UseLumenStart())
+        {
+            ToggleLumenStart();
+            return TRUE;
+        }
+
         HWND hwndStartMenu;
         HRESULT hr = IUnknown_GetWindow(m_StartMenuPopup, &hwndStartMenu);
         if (FAILED_UNEXPECTEDLY(hr))

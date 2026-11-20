@@ -116,3 +116,13 @@ def edit(path, regular):
 for f in sys.argv[1:]:
     edit(f, 'Regular' in f)
     print('edited', f)
+
+# Fonts: Selawik (OFL, bundled in media/fonts) in place of Tahoma.
+def fonts(path):
+    s = open(path, encoding='utf-8', errors='surrogateescape', newline='').read()
+    s = s.replace('Tahoma, 8', 'Selawik, 9').replace('Tahoma', 'Selawik')
+    open(path, 'w', encoding='utf-8', errors='surrogateescape', newline='').write(s)
+
+
+for f in sys.argv[1:]:
+    fonts(f)

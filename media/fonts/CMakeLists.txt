@@ -34,6 +34,8 @@ list(APPEND FONT_FILES
     SourceSansPro-Bold.ttf
     SourceSansPro-BoldIt.ttf
     SourceSansPro-It.ttf
+    selawik.ttf
+    selawikb.ttf
     #ssee874.fon # to be added (CORE-16165 and CORE-16166)
     #ssee1255.fon # to be added (CORE-16165 and CORE-16166)
     #ssee1256.fon # to be added (CORE-16165 and CORE-16166)

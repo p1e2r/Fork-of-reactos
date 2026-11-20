@@ -170,6 +170,46 @@ StartWithCommandLine(IN HINSTANCE hInstance)
 }
 #endif
 
+/* Lumen: if the user's visual style is configured but was not loaded at logon
+   (as happens in the live environment), apply it the same way opening the
+   .msstyles file from Explorer does. */
+static VOID
+EnsureConfiguredVisualStyle(VOID)
+{
+    WCHAR szActive[8] = L"", szDll[MAX_PATH] = L"", szExpanded[MAX_PATH], szArgs[MAX_PATH + 128];
+    DWORD cb;
+
+    if (IsThemeActive())
+        return;
+
+    cb = sizeof(szActive);
+    if (SHGetValueW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\ThemeManager",
+                    L"ThemeActive", NULL, szActive, &cb) != ERROR_SUCCESS || szActive[0] != L'1')
+    {
+        return;
+    }
+
+    cb = sizeof(szDll);
+    if (SHGetValueW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\ThemeManager",
+                    L"DllName", NULL, szDll, &cb) != ERROR_SUCCESS)
+    {
+        return;
+    }
+
+    if (!ExpandEnvironmentStringsW(szDll, szExpanded, _countof(szExpanded)) ||
+        GetFileAttributesW(szExpanded) == INVALID_FILE_ATTRIBUTES)
+    {
+        return;
+    }
+
+    if (SUCCEEDED(StringCchPrintfW(szArgs, _countof(szArgs),
+                                   L"shell32.dll,Control_RunDLL desk.cpl desk,@Appearance /Action:ActivateMSTheme /file:\"%s\"",
+                                   szExpanded)))
+    {
+        ShellExecuteW(NULL, NULL, L"rundll32.exe", szArgs, NULL, SW_HIDE);
+    }
+}
+
 static INT
 StartWithDesktop(IN HINSTANCE hInstance)
 {
@@ -205,6 +245,8 @@ StartWithDesktop(IN HINSTANCE hInstance)
     _WinList_Init();
 
     InitializeServerAdminUI();
+
+    EnsureConfiguredVisualStyle();
 
     CComPtr<ITrayWindow> Tray;
     CreateTrayWindow(&Tray);
