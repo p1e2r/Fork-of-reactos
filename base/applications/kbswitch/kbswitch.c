@@ -677,19 +677,23 @@ CreateTrayIcon(LPTSTR szKLID, LPCTSTR szImeFile OPTIONAL)
 
     SetRect(&rect, 0, 0, cxIcon, cyIcon);
 
-    /* Draw hbmColor */
+    /* Lumen: plain text on a transparent background (no colored box), drawn in
+       the button text color so it follows the taskbar's light or dark look */
+
+    /* Draw hbmColor: black where transparent, text color where the letters are */
     hBmpOld = SelectObject(hdc, hbmColor);
-    SetDCBrushColor(hdc, GetSysColor(COLOR_HIGHLIGHT));
-    FillRect(hdc, &rect, (HBRUSH)GetStockObject(DC_BRUSH));
+    PatBlt(hdc, 0, 0, cxIcon, cyIcon, BLACKNESS);
     hFontOld = SelectObject(hdc, hFont);
-    SetTextColor(hdc, GetSysColor(COLOR_HIGHLIGHTTEXT));
+    SetTextColor(hdc, GetSysColor(COLOR_BTNTEXT));
     SetBkMode(hdc, TRANSPARENT);
     DrawText(hdc, szBuf, 2, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-    SelectObject(hdc, hFontOld);
 
-    /* Fill hbmMono with black */
+    /* Draw hbmMono: white (transparent) everywhere except the letters */
     SelectObject(hdc, hbmMono);
-    PatBlt(hdc, 0, 0, cxIcon, cyIcon, BLACKNESS);
+    PatBlt(hdc, 0, 0, cxIcon, cyIcon, WHITENESS);
+    SetTextColor(hdc, RGB(0, 0, 0));
+    DrawText(hdc, szBuf, 2, &rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+    SelectObject(hdc, hFontOld);
     SelectObject(hdc, hBmpOld);
 
     /* Create an icon from hbmColor and hbmMono */

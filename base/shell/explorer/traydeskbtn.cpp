@@ -370,6 +370,19 @@ VOID CTrayShowDesktopButton::OnDraw(HDC hdc, LPRECT prc)
         }
     }
 
+    /* Lumen: Windows 11-style show-desktop button, a thin divider at the edge */
+    if (g_TaskbarSettings.bCenterTaskbar && !m_highContrastMode)
+    {
+        RECT rcLine = rc;
+        rcLine.left += (rc.right - rc.left) / 2 - 1;
+        rcLine.right = rcLine.left + 1;
+        rcLine.top += (rc.bottom - rc.top) / 4;
+        rcLine.bottom -= (rc.bottom - rc.top) / 4;
+        SetDCBrushColor(hdc, RGB(160, 160, 160));
+        ::FillRect(hdc, &rcLine, (HBRUSH)GetStockObject(DC_BRUSH));
+        return;
+    }
+
     if (m_highContrastMode || !m_drawWithDedicatedBackground)
     {
         /* Prepare to draw icon */
