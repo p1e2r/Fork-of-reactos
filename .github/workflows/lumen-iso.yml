@@ -100,7 +100,7 @@ jobs:
         PY
           while read -r k; do mon "sendkey $k"; done < /tmp/keys.txt
         }
-        sleep 30; shot 3-themed-desktop
+        sleep 240; shot 3-themed-desktop
         # open Notepad through Run, to show a themed window
         keys meta_l-r; sleep 5; typestr notepad; keys ret
         sleep 30; shot 4-window

@@ -221,13 +221,13 @@ EnsureConfiguredVisualStyleThread(LPVOID lpParam)
     }
 
     /* Try a few times: early in the session the theme service may not be ready yet */
-    for (INT iTry = 0; iTry < 3; iTry++)
+    for (INT iTry = 0; iTry < 15; iTry++)
     {
         WCHAR szCurrent[MAX_PATH];
         STARTUPINFOW si = { sizeof(si) };
         PROCESS_INFORMATION pi;
 
-        Sleep(iTry == 0 ? 4000 : 15000);
+        Sleep(iTry == 0 ? 4000 : 20000);
 
         /* IsThemeActive() only reflects the registry when the theme hooks are not
            running, so check whether a style is really loaded */
@@ -238,7 +238,8 @@ EnsureConfiguredVisualStyleThread(LPVOID lpParam)
         si.wShowWindow = SW_HIDE;
         if (CreateProcessW(NULL, szArgs, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
         {
-            WaitForSingleObject(pi.hProcess, 30000);
+            if (WaitForSingleObject(pi.hProcess, 30000) == WAIT_TIMEOUT)
+                TerminateProcess(pi.hProcess, 1);
             CloseHandle(pi.hThread);
             CloseHandle(pi.hProcess);
         }
