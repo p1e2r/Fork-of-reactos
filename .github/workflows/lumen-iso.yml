@@ -78,9 +78,9 @@ jobs:
         ACCEL=""
         if [ -e /dev/kvm ]; then sudo chmod 666 /dev/kvm; ACCEL="-enable-kvm"; fi
         mkdir -p shots
-        qemu-system-i386 $ACCEL -m 1024 -cdrom build/liveimg.iso -boot d -vga std \
+        qemu-system-i386 $ACCEL -m 1024 -cdrom build/bootcd.iso -boot d -vga std \
           -display none -monitor unix:/tmp/qmon,server,nowait -serial file:shots/serial.log &
-        for t in 60 120 180 240 300 420; do
+        for t in 90 180 270 360 480 600; do
           sleep $(( t - ${prev:-0} )); prev=$t
           echo "screendump /tmp/shot-$t.ppm" | socat - UNIX-CONNECT:/tmp/qmon || true
           sleep 2; convert /tmp/shot-$t.ppm shots/livecd-$t.png || true
