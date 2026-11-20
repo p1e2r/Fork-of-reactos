@@ -74,11 +74,16 @@ jobs:
     - name: Boot LiveCD and take screenshots
       if: ${{ matrix.arch == 'i386' }}
       run: |
-        sudo apt-get update -q && sudo apt-get install -y -q qemu-system-x86 imagemagick socat
+        sudo apt-get update -q && sudo apt-get install -y -q qemu-system-x86 imagemagick socat mtools dosfstools fdisk
         ACCEL=""
         if [ -e /dev/kvm ]; then sudo chmod 666 /dev/kvm; ACCEL="-enable-kvm"; fi
         mkdir -p shots
-        qemu-system-i386 $ACCEL -m 1024 -cdrom build/bootcd.iso -boot d -vga std \
+        # a small FAT disk holding a copy of cmd.exe, to check what a program outside the Windows folder sees
+        dd if=/dev/zero of=apps.img bs=1M count=32 status=none
+        echo 'start=2048, type=06' | sfdisk -q apps.img
+        mkfs.vfat -F 16 --offset 2048 apps.img >/dev/null
+        mcopy -i apps.img@@1M "$(find build -iname cmd.exe -path '*shell*' | head -1)" ::c2.exe
+        qemu-system-i386 $ACCEL -m 1024 -cdrom build/bootcd.iso -drive file=apps.img,format=raw,if=ide -boot d -vga std \
           -display none -monitor unix:/tmp/qmon,server,nowait -serial file:shots/serial.log &
         mon() { echo "$1" | socat - UNIX-CONNECT:/tmp/qmon >/dev/null || true; sleep 1; }
         shot() { mon "screendump /tmp/$1.ppm"; sleep 2; convert /tmp/$1.ppm shots/$1.png || true; }
@@ -114,7 +119,7 @@ jobs:
         keys esc; sleep 2; keys meta_l; sleep 5
         # version check: the system cmd sees the real version, a copy outside the Windows folder sees Windows 10
         keys meta_l-r; sleep 5
-        typestr 'cmd /k ver & copy %SystemRoot%\system32\cmd.exe %USERPROFILE%\c2.exe & %USERPROFILE%\c2.exe /k ver'
+        typestr 'cmd /k ver & C:\c2.exe /k ver'
         keys ret; sleep 20; shot 7-version
         kill %1 || true
     - name: Publish screenshots to the screenshots branch
