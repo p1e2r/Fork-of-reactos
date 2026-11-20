@@ -586,6 +586,8 @@ HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",,0x00000012
 
 ; Empty App Compat Layers
 HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers","",0x00000000,""
+; Lumen: programs outside the Windows folder see Windows 10 unless they have their own compatibility mode
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags","DefaultLayer",0x00000000,"WIN10RTM"
 
 ; Version Information
 HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion","InstallDate",0x00010003,0

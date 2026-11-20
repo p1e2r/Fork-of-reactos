@@ -442,6 +442,51 @@ void WINAPI SdbReleaseDatabase(HSDB hsdb)
  *
  * @return  TRUE if it succeeds, FALSE if it fails.
  */
+/* Lumen: apply a default compatibility layer (normally WIN10RTM, so programs see a
+ * modern Windows version) to applications that have no layer of their own.
+ * Programs inside the system root are left alone. The layer comes from
+ * HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags, value
+ * "DefaultLayer"; an empty or missing value turns the feature off. */
+static BOOL SdbpAddDefaultLayer(HSDB hsdb, LPCWSTR DosPath, PSDBQUERYRESULT result)
+{
+    static const UNICODE_STRING KeyName =
+        RTL_CONSTANT_STRING(L"\\Registry\\Machine\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags");
+    static const UNICODE_STRING ValueName = RTL_CONSTANT_STRING(L"DefaultLayer");
+    OBJECT_ATTRIBUTES Attr;
+    HANDLE hKey;
+    NTSTATUS Status;
+    UCHAR Buffer[sizeof(KEY_VALUE_PARTIAL_INFORMATION) + MAX_LAYER_LENGTH * sizeof(WCHAR)];
+    PKEY_VALUE_PARTIAL_INFORMATION Info = (PKEY_VALUE_PARTIAL_INFORMATION)Buffer;
+    ULONG Length, cchRoot;
+    WCHAR wszLayers[MAX_LAYER_LENGTH];
+    PCWSTR SystemRoot = SharedUserData->NtSystemRoot;
+
+    /* Leave the operating system's own programs alone */
+    cchRoot = (ULONG)wcslen(SystemRoot);
+    if (cchRoot && _wcsnicmp(DosPath, SystemRoot, cchRoot) == 0 &&
+        (DosPath[cchRoot] == L'\\' || DosPath[cchRoot] == UNICODE_NULL))
+    {
+        return FALSE;
+    }
+
+    InitializeObjectAttributes(&Attr, (PUNICODE_STRING)&KeyName, OBJ_CASE_INSENSITIVE, NULL, NULL);
+    Status = NtOpenKey(&hKey, KEY_QUERY_VALUE, &Attr);
+    if (!NT_SUCCESS(Status))
+        return FALSE;
+
+    Status = NtQueryValueKey(hKey, (PUNICODE_STRING)&ValueName, KeyValuePartialInformation,
+                             Info, sizeof(Buffer) - sizeof(WCHAR), &Length);
+    NtClose(hKey);
+    if (!NT_SUCCESS(Status) || Info->Type != REG_SZ || Info->DataLength < 2 * sizeof(WCHAR))
+        return FALSE;
+
+    RtlCopyMemory(wszLayers, Info->Data, min(Info->DataLength, sizeof(wszLayers) - sizeof(WCHAR)));
+    wszLayers[min(Info->DataLength, sizeof(wszLayers) - sizeof(WCHAR)) / sizeof(WCHAR)] = UNICODE_NULL;
+
+    return SdbpAddLayerMatches(hsdb, wszLayers, (DWORD)(wcslen(wszLayers) * sizeof(WCHAR)), result) > 0;
+}
+
+
 BOOL WINAPI SdbGetMatchingExe(HSDB hsdb, LPCWSTR path, LPCWSTR module_name,
                               LPCWSTR env, DWORD flags, PSDBQUERYRESULT result)
 {
@@ -572,6 +617,10 @@ BOOL WINAPI SdbGetMatchingExe(HSDB hsdb, LPCWSTR path, LPCWSTR module_name,
             result->dwFlags |= SHIMREG_HAS_ENVIRONMENT;
         }
     }
+
+    /* Lumen: programs without a layer of their own get the default one */
+    if (result->dwLayerCount == 0 && SdbpAddDefaultLayer(hsdb, DosApplicationName.String.Buffer, result))
+        ret = TRUE;
 
 Cleanup:
     RtlFreeBuffer(&DosApplicationName.ByteBuffer);
