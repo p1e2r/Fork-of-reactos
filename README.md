@@ -1,132 +1,88 @@
-<p align=center>
-  <a href="https://reactos.org/">
-    <img alt="ReactOS" src="https://reactos.org/wiki/images/0/02/ReactOS_logo.png">
-  </a>
-</p>
+# Lumen OS
 
----
+A fork of [ReactOS](https://reactos.org/) that looks like Windows 11 and runs Windows programs, without the bloat.
 
-<p align=center>
-  <a href="https://reactos.org/project-news/reactos-0416-released/">
-    <img alt="ReactOS 0.4.16 Release" src="https://img.shields.io/badge/release-0.4.16-0688CB.svg"></a>
-  <a href="https://reactos.org/download/">
-    <img alt="Download ReactOS" src="https://img.shields.io/badge/download-latest-0688CB.svg"></a>
-  <a href="https://sourceforge.net/projects/reactos/">
-    <img alt="SourceForge Download" src="https://img.shields.io/sourceforge/dm/reactos.svg?colorB=0688CB"></a>
-  <a href="https://github.com/reactos/reactos/blob/master/COPYING">
-    <img alt="License" src="https://img.shields.io/badge/license-GNU_GPL_2.0-0688CB.svg"></a>
-  <a href="https://reactos.org/donate/">
-    <img alt="Donate" src="https://img.shields.io/badge/%24-donate-E44E4A.svg"></a>
-  <a href="https://twitter.com/reactos">
-    <img alt="Follow on Twitter" src="https://img.shields.io/twitter/follow/reactos.svg?style=social&label=Follow%20%40reactos"></a>
-</p>
+ReactOS is an open-source operating system built to be compatible with programs and drivers made for Windows. Lumen OS keeps all of that and adds a modern Windows 11-style look, plus a few changes that help newer Windows programs run.
 
-## Quick Links
-[Website](https://reactos.org/) &bull;
-[Official chat](https://chat.reactos.org/) &bull;
-[Wiki](https://reactos.org/wiki/) &bull;
-[Forum](https://reactos.org/forum/) &bull;
-[Community Discord](https://discord.gg/7knjvhT) &bull;
-[JIRA Bug Tracker](https://jira.reactos.org/issues/) &bull;
-[ReactOS Git mirror](https://git.reactos.org/) &bull;
-[Testman](https://reactos.org/testman/)
+> Lumen OS is a hobby project. It is not made by, affiliated with or endorsed by Microsoft or the ReactOS project. All artwork in this fork (theme, icons, cursors, wallpaper, start glyph) was drawn from scratch; no Microsoft assets are included.
 
-## What is ReactOS?
+## What's different from ReactOS
 
-ReactOS™ is an Open Source effort to develop a quality operating system that is compatible with applications and drivers written for the Microsoft® Windows™ NT family of operating systems (NT4, 2000, XP, 2003, Vista, 7).
+**Look and feel**
+- **Lumen visual style:** light title bars, wide minimize/maximize/close buttons with a red close hover, rounded buttons, blue checkboxes, radio buttons and progress bars, and rounded window corners.
+- **Centered taskbar:** start button and app icons sit together in the middle. Buttons show icons only, the active app gets a blue bar under its icon, and show-desktop is a thin line at the right edge.
+- **Windows 11-style start menu:** a search box, a grid of pinned apps, recent files, an "All apps" list, and user and power buttons.
+- **New artwork:** an icon set for folders, drives, This PC, Recycle Bin, Control Panel and the built-in apps; thin tray icons; a new cursor set; a new default wallpaper.
+- **Font:** [Selawik](https://github.com/microsoft/Selawik), an open-source font (SIL OFL 1.1), used for window titles, menus and the start menu.
 
-The ReactOS project, although currently focused on Windows Server 2003 compatibility, is always keeping an eye toward compatibility with Windows Vista and future Windows NT releases.
+**Compatibility**
+- **Programs see Windows 10:** programs outside the Windows folder are told the OS is Windows 10 (10.0), so they don't refuse to start on a version check. The OS's own programs still see the real version.
+- **Vista and later system functions:** the ISO is built with `DLL_EXPORT_VERSION=0x600`, which exposes the extra functions many newer programs need.
+- **Installs to `C:\Windows`** by default, where Windows programs expect to find it.
 
-The code of ReactOS is licensed under [GNU GPL 2.0](https://github.com/reactos/reactos/blob/master/COPYING).
+## Download
 
-### Product quality warning
+Every push to `lumen-win11-look` builds bootable ISOs on GitHub Actions:
 
-**ReactOS is currently an Alpha quality operating system.** This means that ReactOS is under heavy development and you have to be ready to encounter some problems. Different things may not work well and it can corrupt the data present on your hard disk. It is HIGHLY recommended to test ReactOS on a virtual machine or on a computer with no sensitive or critical data!
+1. Open the **Actions** tab and pick the latest successful **Lumen ISO** run.
+2. Under **Artifacts**, download `lumen-i386-…` (32-bit) or `lumen-amd64-…` (64-bit).
+3. Unzip it to get `bootcd.iso`. Boot it in a virtual machine (VirtualBox, VMware, QEMU) or write it to a USB stick.
+
+The boot CD can install the OS or run it live without installing. In live mode, the Lumen visual style is not applied automatically yet. To switch it on, open `X:\reactos\Resources\Themes\Lumen\lumen.msstyles`.
+
+The 32-bit build also boots in QEMU on every run, and the screenshots are pushed to the `screenshots` branch.
+
+## Settings you can change
+
+| What | Where | Default |
+|---|---|---|
+| Centered taskbar and start menu | `HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced`, `TaskbarAl` (DWORD) | `1` (set `0` for the classic left-aligned taskbar and menu) |
+| Version programs see | `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags`, `DefaultLayer` (string) | `WIN10RTM` (try `WIN7RTM`, or empty to turn off) |
+| Compatibility mode for one program | Right-click the program → **Properties** → **Compatibility** | none (takes priority over `DefaultLayer`) |
 
 ## Building
 
-![Build](https://github.com/reactos/reactos/workflows/Build/badge.svg) [![rosbewin.badge]][rosbewin.link] [![rosbeunix.badge]][rosbeunix.link] [![coverity.badge]][coverity.link]
+The build works the same as upstream ReactOS: install the [ReactOS Build Environment (RosBE)](https://reactos.org/wiki/Build_Environment), then:
 
-To build the system it is strongly advised to use the _ReactOS Build Environment (RosBE)._
-Up-to-date versions for Windows and for Unix/GNU-Linux are available from our download page at: ["Build Environment"](https://reactos.org/wiki/Build_Environment).
+```sh
+mkdir build && cd build
+../configure.sh -DDLL_EXPORT_VERSION=0x600   # configure.cmd on Windows
+ninja
+ninja bootcd
+```
 
-Alternatively one can use Microsoft Visual C++ (MSVC) version 2019+. Building with MSVC is covered here: ["Visual Studio or Microsoft Visual C++"](https://reactos.org/wiki/CMake#Visual_Studio_or_Microsoft_Visual_C.2B.2B).
+`.github/workflows/lumen-iso.yml` shows the exact steps CI uses. The upstream multi-configuration build (`build.yml`) only runs when started by hand.
 
-See ["Building ReactOS"](https://reactos.org/wiki/Building_ReactOS) article for more details.
+The artwork is generated by scripts in `media/themes/Lumen/tools/`:
 
-### Binaries
+| Script | Makes |
+|---|---|
+| `lumen_bitmaps.py`, `lumen_ini.py` | Lumen visual style images and settings |
+| `lumen_icons.py` | Shell and app icons |
+| `lumen_tray.py` | Notification area icons |
+| `lumen_cursors.py` | Mouse cursors |
+| `lumen_wallpaper.py` | Default wallpaper |
+| `startglyph.py` | Start button glyph |
 
-To build ReactOS you must run the `configure` script in the directory you want to have your build files. Choose `configure.cmd` or `configure.sh` depending on your system. Then run `ninja <modulename>` to build a module you want or just `ninja` to build all modules.
+Run them from the repository root with Python 3, Pillow and NumPy installed.
 
-### Bootable images
+## Known limitations
 
-To build a bootable CD image run `ninja bootcd` from the build directory. This will create a CD image with a filename `bootcd.iso`.
+- The start menu, taskbar labels and setup theme picker are English only, and the pinned apps are a fixed list.
+- About 200 older icons (printers, fonts, many Control Panel items and file types) still use the ReactOS style.
+- Rounded corners use a window region, so the edges are not anti-aliased, and there is no window shadow.
+- Reporting Windows 10 to programs only changes the version number. Programs that need Windows 10 features ReactOS doesn't have can still fail.
+- Hardware support, stability and app compatibility are the same as ReactOS, which is still alpha software.
 
-You can always download fresh binary builds of bootable images from the ["Daily builds"](https://reactos.org/getbuilds/) page.
+## License
 
-## Installing
+Lumen OS is based on ReactOS, so it uses the same licenses: mostly the [GNU GPL 2.0](COPYING), with some parts under LGPL and other compatible licenses (see the `COPYING*` files and each file's header).
 
-By default, ReactOS currently can only be installed on a machine that has a FAT16 or FAT32 partition as the active (bootable) partition.
-The partition on which ReactOS is to be installed (which may or may not be the bootable partition) must also be formatted as FAT16 or FAT32.
-ReactOS Setup can format the partitions if needed.
+- The Lumen visual style is based on ReactOS's "Modern" theme and is GPL 3.0.
+- Selawik is under the SIL Open Font License 1.1 (`media/fonts/doc/Selawik/`).
 
-Starting with 0.4.10, ReactOS can be installed using the BtrFS file system. But consider this as an experimental feature and thus regressions not triggered on FAT setup may be observed.
+## Credits
 
-To install ReactOS from the bootable CD distribution, extract the archive contents. Then burn the CD image, boot from it, and follow the instructions.
-
-See ["Installing ReactOS"](https://reactos.org/wiki/Installing_ReactOS) Wiki page or [INSTALL](INSTALL) for more details.
-
-## Testing
-
-If you discover a bug in ReactOS search on JIRA first - it might be reported already. If not report the bug providing logs and as much information as possible.
-
-See ["File Bugs"](https://reactos.org/wiki/File_Bugs) for a guide.
-
-__NOTE:__ The bug tracker is _not_ for discussions. Please use our [official chat](https://chat.reactos.org/) or our [forum](https://reactos.org/forum/).
-
-## Contributing  [![prwelcome.badge]](https://reactos.org/wiki/Commiting_Changes)
-
-We are always looking for developers! Check [how to contribute](CONTRIBUTING.md) if you are willing to participate.
-
-__Legal notice__: If you have seen proprietary Microsoft Windows source code (including but not limited to the leaked Windows NT 3.5, NT 4, 2000 source code and the Windows Research Kernel), your contribution won't be accepted because of potential copyright violation.
-
-__AI tools__: Write PR descriptions and commit messages yourself, and label any other AI-generated text. See [details](CONTRIBUTING.md#ai-generated-communication).
-
-Try out cloud-based ReactOS development using Gitpod and Docker:
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/reactos/reactos)
-
-You can also support ReactOS by [donating](https://reactos.org/donate/)! We rely on our backers to maintain our servers and accelerate development by [hiring full-time devs](https://reactos.org/contributing/#paid-jobs).
-
-## More information
-
-ReactOS is a Free and Open Source operating system based on the Windows architecture,
-providing support for existing applications and drivers, and an alternative to the current dominant consumer operating system.
-
-It is not another wrapper built on Linux, like WINE. It does not attempt or plan to compete with WINE; in fact, the user-mode part of ReactOS is almost entirely WINE-based and our two teams have cooperated closely in the past.
-
-ReactOS is also not "yet another OS". It does not attempt to be a third player like any other alternative OS out there. People are not meant to uninstall Linux and use ReactOS instead; ReactOS is a replacement for Windows users who want a Windows replacement that behaves just like Windows.
-
-More information is available at: [reactos.org](https://reactos.org/).
-
-Also see the [media/doc](/media/doc/) subdirectory for some sparse notes.
-
-## Who is responsible
-
-Active devs are listed as members of [GitHub organization](https://github.com/orgs/reactos/people).
-See also the [CREDITS](CREDITS) file for others.
-
-## Code mirrors
-
-The main development is done on [GitHub](https://github.com/reactos/reactos). We have an [alternative mirror](https://git.reactos.org/?p=reactos.git) in case GitHub is down.
-
-There is also an obsolete [SVN archive repository](https://svn.reactos.org/reactos/) that is kept for historical purposes.
-
-[coverity.badge]:   https://scan.coverity.com/projects/205/badge.svg?flat=1
-[rosbewin.badge]:   https://img.shields.io/badge/RosBE_Windows-2.2.1-0688CB.svg
-[rosbeunix.badge]:  https://img.shields.io/badge/RosBE_Unix-2.2.1-0688CB.svg
-[prwelcome.badge]:  https://img.shields.io/badge/PR-welcome-0688CB.svg
-
-[coverity.link]:    https://scan.coverity.com/projects/205
-[rosbewin.link]:    https://sourceforge.net/projects/reactos/files/RosBE-Windows/i386/2.2.1/
-[rosbeunix.link]:   https://sourceforge.net/projects/reactos/files/RosBE-Unix/2.2.1/
+- [The ReactOS project](https://reactos.org/) and its contributors, who built everything this fork stands on. Bugs in the core OS usually belong upstream: [ReactOS on GitHub](https://github.com/reactos/reactos), [bug tracker](https://jira.reactos.org/).
+- The "Modern" theme by Polar, the base of the Lumen visual style.
+- Microsoft's open-source Selawik font.
