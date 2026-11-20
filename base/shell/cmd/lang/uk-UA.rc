@@ -426,7 +426,7 @@ VER [/C][/R][/W]\n\n\
     STRING_VERSION_HELP5 "\nВiдсилайте звiти про помилки на <ros-dev@reactos.org>.\n\
 Оновлення доступнi на: https://reactos.org"
     STRING_VERSION_HELP6 "\nFreeDOS-версiя написана:\n"
-    STRING_VERSION_HELP7 "\nReactOS-версiя написана:\n"
+    STRING_VERSION_HELP7 "\nLumen-версiя написана:\n"
     STRING_VOL_HELP1 " Том в пристрої %c має мiтку %s\n"
     STRING_VOL_HELP2 " Том в пристрої %c не має мiтки.\n"
     STRING_VOL_HELP3 " Серiйний номер тому: %04X-%04X\n"

@@ -174,7 +174,7 @@ STYLE DS_SHELLFONT | WS_CHILD
 FONT 8, "MS Shell Dlg"
 BEGIN
     LTEXT "Lumen Kurulum Sihirbazı beklenmedik şekilde sona erdi", IDC_FINISHTITLE, 115, 8, 195, 24
-    LTEXT "Lumen'un ilk kurulum aşaması bir hata nedeniyle veya işlemi iptal etmenizden dolayı erkenden sona erdi.\n\nReactOS'u kurmak veya yükseltmek için Kurulum Sihirbazı'nı daha sonra yeniden çalıştırabilirsiniz.", IDC_STATIC, 115, 40, 195, 48
+    LTEXT "Lumen'un ilk kurulum aşaması bir hata nedeniyle veya işlemi iptal etmenizden dolayı erkenden sona erdi.\n\nLumen'u kurmak veya yükseltmek için Kurulum Sihirbazı'nı daha sonra yeniden çalıştırabilirsiniz.", IDC_STATIC, 115, 40, 195, 48
     // The following text can be replaced by IDS_ABORT_NO_REBOOT at runtime;
     // please ensure it can hold in the text control!
     LTEXT "Bilgisayarınız 15 saniye içinde veya Yeniden Başlat'a tıkladığınızda otomatik olarak yeniden başlatılacaktır.", IDC_FINISHTEXT, 115, 110, 195, 24

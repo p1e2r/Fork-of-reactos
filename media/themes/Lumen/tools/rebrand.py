@@ -9,7 +9,7 @@ KEEP = re.compile(r'copyright|\(c\)|©|http|www\.|reactos\.org|project|team|deve
                   r'written by|contributor|based on|thanks|authors?\b|\\\\reactos|reactos\\\\|'
                   r'#include|#define|IDS_REACTOS|IDB_|IDI_|\.bmp|\.ico|\.png|jira|\bgit\b|forum|wiki|irc|'
                   r'mailing|apache|freetype|wine\b', re.I)
-WORD = re.compile(r'\bReactOS\b')
+WORD = re.compile(r'(?:(?<=\\n)|(?<=\\t)|\b)ReactOS\b')
 changed = files = 0
 for dirpath, dirs, names in os.walk(ROOT):
     rel = dirpath.replace(ROOT, '')

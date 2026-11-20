@@ -171,7 +171,7 @@ STYLE DS_SHELLFONT | WS_CHILD
 FONT 9, "新細明體"
 BEGIN
     LTEXT "Lumen 安裝程式提前結束", IDC_FINISHTITLE, 115, 8, 195, 24
-    LTEXT "由於發生錯誤或是您取消安裝，\nReactOS 的第一階段安裝提前結束。\n\n若要在稍後時間安裝或升級 Lumen，您可以再次執行安裝精靈。", IDC_STATIC, 115, 40, 195, 48
+    LTEXT "由於發生錯誤或是您取消安裝，\nLumen 的第一階段安裝提前結束。\n\n若要在稍後時間安裝或升級 Lumen，您可以再次執行安裝精靈。", IDC_STATIC, 115, 40, 195, 48
     // The following text can be replaced by IDS_ABORT_NO_REBOOT at runtime;
     // please ensure it can hold in the text control!
     LTEXT "您的電腦將在 15 秒後，或在您按下［重新啟動］時自動重新開機。", IDC_FINISHTEXT, 115, 110, 195, 24

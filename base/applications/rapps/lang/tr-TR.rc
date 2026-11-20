@@ -174,7 +174,7 @@ BEGIN
     IDS_APPTITLE "Lumen Uygulama Yöneticisi"
     IDS_APP_AUTHORS "Telif Hakkı: 2009 Dmitry Chapyshev"
     IDS_WELCOME_TITLE "Lumen Uygulama Yöneticisi'ne hoş geldiniz."
-    IDS_WELCOME_TEXT "Solda bir kategori seçiniz, ardından kurmak ya da kaldırmak için bir uygulama seçiniz.\nReactOS'un İnternet sitesi: "
+    IDS_WELCOME_TEXT "Solda bir kategori seçiniz, ardından kurmak ya da kaldırmak için bir uygulama seçiniz.\nLumen'un İnternet sitesi: "
     IDS_WELCOME_URL "https://reactos.org"
 
     IDS_APPWIZ_TITLE "Program Ekle/Kaldır"

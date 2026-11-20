@@ -171,7 +171,7 @@ BEGIN
     IDS_APPTITLE "Lumen Alkalmazáskezelő"
     IDS_APP_AUTHORS "Copyright 2009 Dmitry Chapyshev"
     IDS_WELCOME_TITLE "Üdvözöljük a Lumen Alkalmazáskezelőben!"
-    IDS_WELCOME_TEXT "Bal oldalon válasszon kategóriát, majd válasszon egy telepíteni vagy eltávolítani kívánt alkalmazást.\nReactOS weboldal: "
+    IDS_WELCOME_TEXT "Bal oldalon válasszon kategóriát, majd válasszon egy telepíteni vagy eltávolítani kívánt alkalmazást.\nLumen weboldal: "
     IDS_WELCOME_URL "https://reactos.org"
 
     IDS_APPWIZ_TITLE "Add/Remove Programs"

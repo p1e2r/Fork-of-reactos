@@ -171,7 +171,7 @@ BEGIN
     IDS_APPTITLE "Lumen Applications Manager"
     IDS_APP_AUTHORS "Copyright 2009 Dmitry Chapyshev"
     IDS_WELCOME_TITLE "Mire Se Erdhe ne Lumen Applications Manager!"
-    IDS_WELCOME_TEXT "Zgjidh nje kategori ne te majte, pastaj zgjidh nje aplicacion per ta instaluar ose uninstall.\nReactOS Web Site: "
+    IDS_WELCOME_TEXT "Zgjidh nje kategori ne te majte, pastaj zgjidh nje aplicacion per ta instaluar ose uninstall.\nLumen Web Site: "
     IDS_WELCOME_URL "https://reactos.org"
 
     IDS_APPWIZ_TITLE "Add/Remove Programs"

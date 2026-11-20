@@ -6,7 +6,7 @@ CAPTION "Lumen セットアップ"
 FONT 9, "MS UI Gothic"
 BEGIN
     LTEXT "Lumen セットアップ ウィザードへようこそ", IDC_WELCOMETITLE, 115, 8, 195, 24
-    LTEXT "このウィザードでは、Lumen をコンピュータにインストールします。\nReactOS を正しくセットアップするために、ユーザーとコンピュータに関する情報を集める必要があります。", IDC_STATIC, 115, 40, 195, 50
+    LTEXT "このウィザードでは、Lumen をコンピュータにインストールします。\nLumen を正しくセットアップするために、ユーザーとコンピュータに関する情報を集める必要があります。", IDC_STATIC, 115, 40, 195, 50
     LTEXT "セットアップを続行するには [次へ] をクリックして下さい。", IDC_STATIC, 115, 169, 195, 17
 END
 
