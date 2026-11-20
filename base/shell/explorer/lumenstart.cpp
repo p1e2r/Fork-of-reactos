@@ -7,6 +7,7 @@
 
 #include "precomp.h"
 #include <windowsx.h>
+#include <math.h>
 
 #define LS_CLASSNAME        L"LumenStartMenu"
 #define LS_WIDTH            600
@@ -475,7 +476,16 @@ static VOID LS_DrawPowerGlyph(HDC hdc, INT cx, INT cy)
     HGDIOBJ hOld = SelectObject(hdc, hpen);
     HGDIOBJ hbrOld = SelectObject(hdc, GetStockObject(NULL_BRUSH));
     /* open circle with a gap at the top, plus the vertical stroke */
-    Arc(hdc, cx - 8, cy - 7, cx + 9, cy + 10, cx + 4, cy - 6, cx - 4, cy - 6);
+    POINT pts[17];
+    INT i;
+    for (i = 0; i < 17; i++)
+    {
+        /* from 60 degrees right of the top, around the bottom, to 60 degrees left of it */
+        double a = (-90.0 + 50.0 + i * (260.0 / 16.0)) * 3.14159265 / 180.0;
+        pts[i].x = cx + (LONG)(8.0 * cos(a) + (cos(a) >= 0 ? 0.5 : -0.5));
+        pts[i].y = cy + 1 + (LONG)(8.0 * sin(a) + (sin(a) >= 0 ? 0.5 : -0.5));
+    }
+    Polyline(hdc, pts, 17);
     MoveToEx(hdc, cx, cy - 9, NULL);
     LineTo(hdc, cx, cy + 1);
     SelectObject(hdc, hbrOld);

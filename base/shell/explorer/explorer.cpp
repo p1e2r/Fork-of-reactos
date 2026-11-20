@@ -173,33 +173,50 @@ StartWithCommandLine(IN HINSTANCE hInstance)
 /* Lumen: if the user's visual style is configured but was not loaded at logon
    (as happens in the live environment), apply it the same way opening the
    .msstyles file from Explorer does. */
+static DWORD WINAPI
+EnsureConfiguredVisualStyleThread(LPVOID lpParam);
+
 static VOID
 EnsureConfiguredVisualStyle(VOID)
+{
+    /* Run it a little after the shell is up, once the desktop is ready */
+    HANDLE hThread = CreateThread(NULL, 0, EnsureConfiguredVisualStyleThread, NULL, 0, NULL);
+    if (hThread)
+        CloseHandle(hThread);
+}
+
+static DWORD WINAPI
+EnsureConfiguredVisualStyleThread(LPVOID lpParam)
 {
     WCHAR szActive[8] = L"", szDll[MAX_PATH] = L"", szExpanded[MAX_PATH], szArgs[MAX_PATH + 128];
     DWORD cb;
 
-    if (IsThemeActive())
-        return;
+    UNREFERENCED_PARAMETER(lpParam);
+    Sleep(5000);
+
+    /* IsThemeActive() only reflects the registry when the theme hooks are not
+       running, so check whether a style is really loaded */
+    if (SUCCEEDED(GetCurrentThemeName(szExpanded, _countof(szExpanded), NULL, 0, NULL, 0)))
+        return 0;
 
     cb = sizeof(szActive);
     if (SHGetValueW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\ThemeManager",
                     L"ThemeActive", NULL, szActive, &cb) != ERROR_SUCCESS || szActive[0] != L'1')
     {
-        return;
+        return 0;
     }
 
     cb = sizeof(szDll);
     if (SHGetValueW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\ThemeManager",
                     L"DllName", NULL, szDll, &cb) != ERROR_SUCCESS)
     {
-        return;
+        return 0;
     }
 
     if (!ExpandEnvironmentStringsW(szDll, szExpanded, _countof(szExpanded)) ||
         GetFileAttributesW(szExpanded) == INVALID_FILE_ATTRIBUTES)
     {
-        return;
+        return 0;
     }
 
     if (SUCCEEDED(StringCchPrintfW(szArgs, _countof(szArgs),
@@ -208,6 +225,7 @@ EnsureConfiguredVisualStyle(VOID)
     {
         ShellExecuteW(NULL, NULL, L"rundll32.exe", szArgs, NULL, SW_HIDE);
     }
+    return 0;
 }
 
 static INT
