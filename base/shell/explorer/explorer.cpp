@@ -192,12 +192,6 @@ EnsureConfiguredVisualStyleThread(LPVOID lpParam)
     DWORD cb;
 
     UNREFERENCED_PARAMETER(lpParam);
-    Sleep(5000);
-
-    /* IsThemeActive() only reflects the registry when the theme hooks are not
-       running, so check whether a style is really loaded */
-    if (SUCCEEDED(GetCurrentThemeName(szExpanded, _countof(szExpanded), NULL, 0, NULL, 0)))
-        return 0;
 
     cb = sizeof(szActive);
     if (SHGetValueW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\ThemeManager",
@@ -219,11 +213,35 @@ EnsureConfiguredVisualStyleThread(LPVOID lpParam)
         return 0;
     }
 
-    if (SUCCEEDED(StringCchPrintfW(szArgs, _countof(szArgs),
-                                   L"shell32.dll,Control_RunDLL desk.cpl desk,@Appearance /Action:ActivateMSTheme /file:\"%s\"",
-                                   szExpanded)))
+    if (FAILED(StringCchPrintfW(szArgs, _countof(szArgs),
+                                L"rundll32.exe shell32.dll,Control_RunDLL desk.cpl desk,@Appearance /Action:ActivateMSTheme /file:\"%s\"",
+                                szExpanded)))
     {
-        ShellExecuteW(NULL, NULL, L"rundll32.exe", szArgs, NULL, SW_HIDE);
+        return 0;
+    }
+
+    /* Try a few times: early in the session the theme service may not be ready yet */
+    for (INT iTry = 0; iTry < 3; iTry++)
+    {
+        WCHAR szCurrent[MAX_PATH];
+        STARTUPINFOW si = { sizeof(si) };
+        PROCESS_INFORMATION pi;
+
+        Sleep(iTry == 0 ? 4000 : 15000);
+
+        /* IsThemeActive() only reflects the registry when the theme hooks are not
+           running, so check whether a style is really loaded */
+        if (SUCCEEDED(GetCurrentThemeName(szCurrent, _countof(szCurrent), NULL, 0, NULL, 0)))
+            break;
+
+        si.dwFlags = STARTF_USESHOWWINDOW;
+        si.wShowWindow = SW_HIDE;
+        if (CreateProcessW(NULL, szArgs, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+        {
+            WaitForSingleObject(pi.hProcess, 30000);
+            CloseHandle(pi.hThread);
+            CloseHandle(pi.hProcess);
+        }
     }
     return 0;
 }
