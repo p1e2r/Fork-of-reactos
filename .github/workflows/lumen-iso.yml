@@ -80,11 +80,18 @@ jobs:
         mkdir -p shots
         qemu-system-i386 $ACCEL -m 1024 -cdrom build/bootcd.iso -boot d -vga std \
           -display none -monitor unix:/tmp/qmon,server,nowait -serial file:shots/serial.log &
-        for t in 90 180 270 360 480 600; do
-          sleep $(( t - ${prev:-0} )); prev=$t
-          echo "screendump /tmp/shot-$t.ppm" | socat - UNIX-CONNECT:/tmp/qmon || true
-          sleep 2; convert /tmp/shot-$t.ppm shots/livecd-$t.png || true
-        done
+        mon() { echo "$1" | socat - UNIX-CONNECT:/tmp/qmon >/dev/null || true; sleep 1; }
+        shot() { mon "screendump /tmp/$1.ppm"; sleep 2; convert /tmp/$1.ppm shots/$1.png || true; }
+        keys() { for k in "$@"; do mon "sendkey $k"; done; }
+        # wait for the LiveCD wizard, then: Next -> "Run ReactOS Live CD"
+        sleep 420; shot 1-wizard
+        keys ret; sleep 10; keys ret
+        sleep 150; shot 2-desktop
+        # open Notepad through Run, to show a themed window
+        keys meta_l-r; sleep 5; keys n o t e p a d ret
+        sleep 30; shot 3-window
+        # start menu
+        keys esc; sleep 2; keys meta_l; sleep 10; shot 4-startmenu
         kill %1 || true
     - name: Publish screenshots to the screenshots branch
       if: ${{ matrix.arch == 'i386' }}
