@@ -2,7 +2,11 @@ name: Lumen ISO
 # Builds a bootable ISO with the Windows 11-style Lumen look on every push.
 on:
   push:
+    branches-ignore: [screenshots]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   iso:
@@ -67,3 +71,28 @@ jobs:
         path: |
           build/bootcd.iso
           build/livecd.iso
+    - name: Boot LiveCD and take screenshots
+      if: ${{ matrix.arch == 'i386' }}
+      run: |
+        sudo apt-get update -q && sudo apt-get install -y -q qemu-system-x86 imagemagick socat
+        ACCEL=""
+        if [ -e /dev/kvm ]; then sudo chmod 666 /dev/kvm; ACCEL="-enable-kvm"; fi
+        mkdir -p shots
+        qemu-system-i386 $ACCEL -m 1024 -cdrom build/livecd.iso -boot d -vga std \
+          -display none -monitor unix:/tmp/qmon,server,nowait -serial file:shots/serial.log &
+        for t in 60 120 180 240 300 420; do
+          sleep $(( t - ${prev:-0} )); prev=$t
+          echo "screendump /tmp/shot-$t.ppm" | socat - UNIX-CONNECT:/tmp/qmon || true
+          sleep 2; convert /tmp/shot-$t.ppm shots/livecd-$t.png || true
+        done
+        kill %1 || true
+    - name: Publish screenshots to the screenshots branch
+      if: ${{ matrix.arch == 'i386' }}
+      run: |
+        cd shots
+        git init -q -b screenshots
+        git config user.name "github-actions"
+        git config user.email "github-actions@users.noreply.github.com"
+        echo "Screenshots of ${{ github.sha }} (${{ github.ref_name }})" > README.md
+        git add -A && git commit -q -m "LiveCD screenshots for ${{ github.sha }}"
+        git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" screenshots

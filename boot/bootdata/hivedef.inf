@@ -67,6 +67,11 @@ HKCU,"Control Panel\Desktop","Pattern",2,"(None)"
 HKCU,"Control Panel\Desktop","Wallpaper",0x00000002,"%SystemRoot%\Web\Wallpaper\Lumen.bmp"
 HKCU,"Control Panel\Desktop","TileWallpaper",2,"0"
 HKCU,"Control Panel\Desktop","WallpaperStyle",2,"2"
+; Lumen: Windows 11-style visual style is the default for new users
+HKCU,"Software\Microsoft\Windows\CurrentVersion\ThemeManager","ThemeActive",0x00000002,"1"
+HKCU,"Software\Microsoft\Windows\CurrentVersion\ThemeManager","DllName",0x00020002,"%SystemRoot%\Resources\Themes\Lumen\lumen.msstyles"
+HKCU,"Software\Microsoft\Windows\CurrentVersion\ThemeManager","ColorName",0x00000002,"Light"
+HKCU,"Software\Microsoft\Windows\CurrentVersion\ThemeManager","SizeName",0x00000002,"Regular Fonts"
 HKCU,"Control Panel\Desktop","FontSmoothing",2,"0"
 HKCU,"Control Panel\Desktop","FontSmoothingOrientation",0x00010003,0x00000001
 HKCU,"Control Panel\Desktop","FontSmoothingType",0x00010003,0x00000001
