@@ -100,7 +100,10 @@ jobs:
         PY
           while read -r k; do mon "sendkey $k"; done < /tmp/keys.txt
         }
-        sleep 240; shot 3-themed-desktop
+        # the live environment starts without a visual style: apply Lumen the way opening the .msstyles does
+        keys meta_l-r; sleep 5
+        typestr 'rundll32.exe shell32.dll,Control_RunDLL desk.cpl desk,@Appearance /Action:ActivateMSTheme /file:"X:\reactos\Resources\Themes\Lumen\lumen.msstyles"'
+        keys ret; sleep 40; shot 3-themed-desktop
         # open Notepad through Run, to show a themed window
         keys meta_l-r; sleep 5; typestr notepad; keys ret
         sleep 30; shot 4-window

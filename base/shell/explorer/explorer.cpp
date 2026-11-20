@@ -170,83 +170,6 @@ StartWithCommandLine(IN HINSTANCE hInstance)
 }
 #endif
 
-/* Lumen: if the user's visual style is configured but was not loaded at logon
-   (as happens in the live environment), apply it the same way opening the
-   .msstyles file from Explorer does. */
-static DWORD WINAPI
-EnsureConfiguredVisualStyleThread(LPVOID lpParam);
-
-static VOID
-EnsureConfiguredVisualStyle(VOID)
-{
-    /* Run it a little after the shell is up, once the desktop is ready */
-    HANDLE hThread = CreateThread(NULL, 0, EnsureConfiguredVisualStyleThread, NULL, 0, NULL);
-    if (hThread)
-        CloseHandle(hThread);
-}
-
-static DWORD WINAPI
-EnsureConfiguredVisualStyleThread(LPVOID lpParam)
-{
-    WCHAR szActive[8] = L"", szDll[MAX_PATH] = L"", szExpanded[MAX_PATH], szArgs[MAX_PATH + 128];
-    DWORD cb;
-
-    UNREFERENCED_PARAMETER(lpParam);
-
-    cb = sizeof(szActive);
-    if (SHGetValueW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\ThemeManager",
-                    L"ThemeActive", NULL, szActive, &cb) != ERROR_SUCCESS || szActive[0] != L'1')
-    {
-        return 0;
-    }
-
-    cb = sizeof(szDll);
-    if (SHGetValueW(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\ThemeManager",
-                    L"DllName", NULL, szDll, &cb) != ERROR_SUCCESS)
-    {
-        return 0;
-    }
-
-    if (!ExpandEnvironmentStringsW(szDll, szExpanded, _countof(szExpanded)) ||
-        GetFileAttributesW(szExpanded) == INVALID_FILE_ATTRIBUTES)
-    {
-        return 0;
-    }
-
-    if (FAILED(StringCchPrintfW(szArgs, _countof(szArgs),
-                                L"rundll32.exe shell32.dll,Control_RunDLL desk.cpl desk,@Appearance /Action:ActivateMSTheme /file:\"%s\"",
-                                szExpanded)))
-    {
-        return 0;
-    }
-
-    /* Try a few times: early in the session the theme service may not be ready yet */
-    for (INT iTry = 0; iTry < 15; iTry++)
-    {
-        WCHAR szCurrent[MAX_PATH];
-        STARTUPINFOW si = { sizeof(si) };
-        PROCESS_INFORMATION pi;
-
-        Sleep(iTry == 0 ? 4000 : 20000);
-
-        /* IsThemeActive() only reflects the registry when the theme hooks are not
-           running, so check whether a style is really loaded */
-        if (SUCCEEDED(GetCurrentThemeName(szCurrent, _countof(szCurrent), NULL, 0, NULL, 0)))
-            break;
-
-        si.dwFlags = STARTF_USESHOWWINDOW;
-        si.wShowWindow = SW_HIDE;
-        if (CreateProcessW(NULL, szArgs, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
-        {
-            if (WaitForSingleObject(pi.hProcess, 30000) == WAIT_TIMEOUT)
-                TerminateProcess(pi.hProcess, 1);
-            CloseHandle(pi.hThread);
-            CloseHandle(pi.hProcess);
-        }
-    }
-    return 0;
-}
-
 static INT
 StartWithDesktop(IN HINSTANCE hInstance)
 {
@@ -282,8 +205,6 @@ StartWithDesktop(IN HINSTANCE hInstance)
     _WinList_Init();
 
     InitializeServerAdminUI();
-
-    EnsureConfiguredVisualStyle();
 
     CComPtr<ITrayWindow> Tray;
     CreateTrayWindow(&Tray);
