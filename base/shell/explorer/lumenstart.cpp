@@ -621,7 +621,7 @@ static VOID LS_Paint(HDC hdc)
         SelectObject(hdc, hbrOld);
         SelectObject(hdc, hpenOld);
         DeleteObject(hbrA);
-        WCHAR szInitial[2] = { (WCHAR)CharUpperW((LPWSTR)(ULONG_PTR)g_szUser[0]), 0 };
+        WCHAR szInitial[2] = { (WCHAR)towupper(g_szUser[0]), 0 };
         LS_Text(hdc, szInitial, rcAvatar, g_hFontBold, RGB(255, 255, 255), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
         rc = rcUser;
         rc.left = rcAvatar.right + 12;
