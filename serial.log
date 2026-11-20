@@ -1,0 +1,149 @@
+
+====== PCI BUS HARDWARE DETECTION =======
+
+00:00.0 Host bridge [0600]: Intel Corporation 440FX - 82441FX PMC [Natoma] [8086:1237] (rev 02)
+	Subsystem: Qemu virtual machine [1af4:1100]
+	Flags: fast devsel, latency 0
+	Device has Extended Address Decoding. It may fail to work on older BIOSes!
+
+00:01.0 ISA bridge [0601]: Intel Corporation 82371SB PIIX3 ISA [Natoma/Triton II] [8086:7000] (rev 00)
+	Subsystem: Qemu virtual machine [1af4:1100]
+	Flags: medium devsel, latency 0
+
+00:01.1 IDE interface [0101]: Intel Corporation 82371SB PIIX3 IDE [Natoma/Triton II] [8086:7010] (rev 00)
+	Subsystem: Qemu virtual machine [1af4:1100]
+	Flags: medium devsel, latency 0
+	I/O ports at c040 [size=16]
+
+00:01.3 Bridge [0680]: Intel Corporation 82371AB/EB/MB PIIX4 ACPI [8086:7113] (rev 03)
+	Subsystem: Qemu virtual machine [1af4:1100]
+	Flags: medium devsel, latency 0, IRQ 09
+	Device is using IRQ 9! ISA Cards using that IRQ may fail!
+
+00:02.0 VGA compatible controller [0300]:  Unknown device [1234:1111] (rev 02)
+	Subsystem: Unknown [1af4:1100]
+	Flags: fast devsel, latency 0
+	Memory at fd000000 (32-bit, prefetchable) [size=16M]
+	Memory at febb0000 (32-bit, non-prefetchable) [size=4K]
+
+00:03.0 Ethernet controller [0200]: Intel Corporation 82540EM Gigabit Ethernet Controller [8086:100e] (rev 03)
+	Subsystem: QEMU Virtual Machine [1af4:1100]
+	Flags: fast devsel, latency 0, IRQ 11
+	Memory at feb80000 (32-bit, non-prefetchable) [size=128K]
+	I/O ports at c000 [size=64]
+	Device is using IRQ 11! ISA Cards using that IRQ may fail!
+
+====== PCI BUS DETECTION COMPLETE =======
+
+PC Compatible Eisa/Isa HAL detected
+BOOT DRIVERS LOADED
+Boot took 19064013475 cycles!
+Interrupts: 1256 System Calls: 15317 Context Switches: 1211
+err:(/base/system/winlogon/winlogon.c:168) WL: RegOpenKeyExW("HKLM\System\CurrentControlSet\Services\Tcpip\Parameters") failed (error 2)
+fixme:(/dll/win32/rpcrt4/rpc_server.c:1736) (0x1000): stub
+fixme:(/dll/win32/rpcrt4/rpc_server.c:1736) (0x1000): stub
+Boot took 21701359463 cycles!
+Interrupts: 3080 System Calls: 28029 Context Switches: 5523
+err:(/dll/win32/lsasrv/lsarpc.c:1452) LsapOpenDbObject(Accounts/S-1-5-6) failed (Status 0xc0000034)
+err:(/base/services/wkssvc/wkssvc.c:82) ServiceInit()
+err:(/base/services/wkssvc/rpcserver.c:61) RpcServerListen() failed (Status 6b1)
+fixme:(/win32ss/printing/providers/localspl/monitors.c:265) InitializePrintMonitor2 loaded.
+fixme:(/win32ss/printing/providers/localspl/monitors.c:304) InitializePrintMonitorList Handle 00234B08
+fixme:(/win32ss/printing/providers/localspl/forms.c:234) InitializeFormList
+fixme:(/win32ss/printing/providers/localspl/printerdrivers.c:784) LocalGetPrinterDriverDirectory((null), Windows NT x86, 1, 00B2EC04, 520, 00B2EC00)
+fixme:(/win32ss/printing/providers/localspl/printerdrivers.c:828) => L"X:\\reactos\\System32\\spool\\drivers\\w32x86"
+fixme:(/win32ss/printing/providers/localspl/printerdrivers.c:110) DriverPath : X:\reactos\System32\spool\drivers\w32x86\3\UniDrv.dll
+fixme:(/base/services/browser/browser.c:144) ServiceMain(1 00234A60)
+err:(/base/services/browser/rpcserver.c:42) RpcServerListen() failed (Status 6b1)
+err:(/base/services/srvsvc/rpcserver.c:64) RpcServerListen() failed (Status 6b1)
+err:(/win32ss/user/user32/windows/cursoricon.c:274) Loading System Cursors
+err:(/win32ss/user/user32/misc/dllmain.c:607) hIconSmWindows 00020076 hIconWindows 00020074 
+err:(/win32ss/user/user32/windows/window.c:496) CreateWindowExW RegisterSystemControls
+Boot took 22515820925 cycles!
+Interrupts: 3606 System Calls: 32535 Context Switches: 6874
+err:(/dll/win32/combase/combase.c:1796) class {56fdf344-fd6d-11d0-958a-006097c9a090} not registered
+err:(/dll/win32/combase/combase.c:1874) no class object {56fdf344-fd6d-11d0-958a-006097c9a090} could be created for context 0x1
+err:(/dll/win32/newdev/newdev.c:1039) DevInstallW failed with error 2
+fixme:(/dll/win32/msports/classinst.c:41) GetBootResourceList()
+err:(/dll/win32/msports/classinst.c:118) RegQueryValueExW() failed (Error 0)
+fixme:(/dll/win32/msports/classinst.c:41) GetBootResourceList()
+err:(/dll/win32/msports/classinst.c:118) RegQueryValueExW() failed (Error 0)
+err:(/dll/win32/newdev/newdev.c:1039) DevInstallW failed with error 31
+err:(/dll/win32/newdev/newdev.c:1039) DevInstallW failed with error 259
+err:(/dll/win32/newdev/newdev.c:1039) DevInstallW failed with error 31
+NDIS_STATUS_MEDIA_CONNECT
+Unhandled event type: 6
+fixme:(/dll/win32/rpcrt4/rpc_server.c:1736) (0x1000): stub
+DHCPCSVC: Adapter Name: [{043ebe40-806c-4379-b6f3-ca550616eac0}] (dynamic)
+err:(/dll/win32/combase/combase.c:1729) apartment not initialised
+err:(/dll/win32/combase/combase.c:1729) apartment not initialised
+fixme:(/dll/win32/wintrust/register.c:1227) stub
+err:(/dll/win32/advpack/reg.c:55) Can't get temp ini file path
+err:(/dll/win32/mshtml/main.c:491) RegInstall failed: 80004005
+err:(/dll/shellext/mydocs/mydocs.cpp:46) CreateEmptyFile(X:\Users\Default\AppData\Roaming\Microsoft\Windows\SendTo\Documents.mydocs, X:\Users\Default\Documents) failed!
+err:(/dll/win32/combase/combase.c:1729) apartment not initialised
+err:(/dll/win32/combase/combase.c:1729) apartment not initialised
+err:(/dll/shellext/sendmail/sendmail.cpp:47) CreateEmptyFile('X:\Users\Default\AppData\Roaming\Microsoft\Windows\SendTo\Desktop (Create shortcut).DeskLink')
+fixme:(/dll/win32/shdocvw/shdocvw_main.c:222) (TRUE, (null)): stub!
+err:(/dll/win32/shell32/wine/shellpath.c:3999) Failed to create directory L"X:\\Users\\Default\\Documents".
+err:(/dll/win32/shell32/wine/shellpath.c:3999) Failed to create directory L"X:\\Users\\Default\\AppData\\Roaming\\Microsoft\\Windows\\Templates".
+err:(/dll/win32/advpack/reg.c:55) Can't get temp ini file path
+fixme:(/dll/win32/wininet/internet.c:352) (1 (null)): stub
+err:(/win32ss/user/user32/windows/window.c:496) CreateWindowExW RegisterSystemControls
+err:(/win32ss/user/user32/windows/class.c:208) VersionRegisterClass: Attempting to call RegisterClassNameW in comctl32.dll.
+fixme:(/dll/win32/shdocvw/winlist.cpp:81) ()
+fixme:(/dll/win32/comctl32/toolbar.c:403) [000400AE] TBSTYLE_REGISTERDROP not implemented
+err:(/base/shell/explorer/mediabtns.cpp:64) CMultimediaBackend::Initialize: No waveform-audio output devices detected
+fixme:(/dll/win32/shell32/shlexec.cpp:2369) flags ignored: 0x00000100
+fixme:(/dll/win32/setupapi/install.c:1494) default path of the installation not changed
+err:(/dll/win32/shell32/wine/shellpath.c:3999) Failed to create directory L"X:\\Program Files".
+fixme:(/dll/win32/setupapi/dirid.c:150) CSIDL 26 not found
+err:(/dll/win32/setupapi/queue.c:1048) GetTempFileNameW(L"X:\\reactos\\TEMP\\") error
+aclmulti.cpp:62: Unexpected failure (punk->QueryInterface(IID_PPV_ARG(IACList, &fObjects[fObjectCount].pACL)))=80004002.
+err:(/dll/win32/shlwapi/autocomp.cpp:51) punk->QueryInterface failed: 0x80004002
+fixme:(/dll/win32/browseui/aclhistory.cpp:35) CACLHistory::Reset(00277DC0): stub
+aclistisf.cpp:301: Unexpected failure (hr)=80004005.
+fixme:(/dll/win32/browseui/aclhistory.cpp:22) CACLHistory::Next(00277DC0, 1, 01B8FEF8, 01B8FEFC): stub
+fixme:(/dll/win32/browseui/aclhistory.cpp:35) CACLHistory::Reset(00277DC0): stub
+aclistisf.cpp:301: Unexpected failure (hr)=80004005.
+fixme:(/dll/win32/browseui/aclhistory.cpp:22) CACLHistory::Next(00277DC0, 1, 01B8FEF8, 01B8FEFC): stub
+fixme:(/dll/win32/browseui/aclhistory.cpp:35) CACLHistory::Reset(00277DC0): stub
+aclistisf.cpp:301: Unexpected failure (hr)=80004005.
+fixme:(/dll/win32/browseui/aclhistory.cpp:22) CACLHistory::Next(00277DC0, 1, 01B8FEF8, 01B8FEFC): stub
+fixme:(/dll/win32/browseui/aclhistory.cpp:35) CACLHistory::Reset(00277DC0): stub
+aclistisf.cpp:301: Unexpected failure (hr)=80004005.
+fixme:(/dll/win32/browseui/aclhistory.cpp:22) CACLHistory::Next(00277DC0, 1, 01B8FEF8, 01B8FEFC): stub
+fixme:(/dll/win32/browseui/aclhistory.cpp:35) CACLHistory::Reset(00277DC0): stub
+aclistisf.cpp:301: Unexpected failure (hr)=80004005.
+fixme:(/dll/win32/browseui/aclhistory.cpp:22) CACLHistory::Next(00277DC0, 1, 01B8FEF8, 01B8FEFC): stub
+fixme:(/dll/win32/browseui/aclhistory.cpp:35) CACLHistory::Reset(00277DC0): stub
+aclistisf.cpp:301: Unexpected failure (hr)=80004005.
+fixme:(/dll/win32/browseui/aclhistory.cpp:22) CACLHistory::Next(00277DC0, 1, 01B8FEF8, 01B8FEFC): stub
+fixme:(/dll/win32/kernelbase/wine/path.c:4828) (L"rundll32.exe shell32.dll,Control_RunDLL desk.cpl desk,@Appearance /Action:ActivateMSTheme /file:\"X:\\reactos\\Resources\\Themes\\Lumen\\lumen.msstyles\"" 4): stub
+fixme:(/dll/win32/shell32/shlexec.cpp:2369) flags ignored: 0x00000100
+aclmulti.cpp:62: Unexpected failure (punk->QueryInterface(IID_PPV_ARG(IACList, &fObjects[fObjectCount].pACL)))=80004002.
+err:(/dll/win32/shlwapi/autocomp.cpp:51) punk->QueryInterface failed: 0x80004002
+err:(/dll/win32/uxtheme/draw.c:1453) GetThemePosition failed
+err:(/dll/win32/uxtheme/draw.c:1453) GetThemePosition failed
+err:(/dll/win32/uxtheme/draw.c:1453) GetThemePosition failed
+fixme:(/dll/win32/browseui/aclhistory.cpp:35) CACLHistory::Reset(0028DFE8): stub
+aclistisf.cpp:301: Unexpected failure (hr)=80004005.
+fixme:(/dll/win32/browseui/aclhistory.cpp:22) CACLHistory::Next(0028DFE8, 1, 0217FEF8, 0217FEFC): stub
+fixme:(/dll/win32/kernelbase/wine/path.c:4828) (L"notepad" 4): stub
+fixme:(/dll/win32/shell32/shlexec.cpp:2369) flags ignored: 0x00000100
+aclmulti.cpp:62: Unexpected failure (punk->QueryInterface(IID_PPV_ARG(IACList, &fObjects[fObjectCount].pACL)))=80004002.
+err:(/dll/win32/shlwapi/autocomp.cpp:51) punk->QueryInterface failed: 0x80004002
+err:(/dll/win32/uxtheme/draw.c:1453) GetThemePosition failed
+err:(/dll/win32/uxtheme/draw.c:1453) GetThemePosition failed
+err:(/dll/win32/uxtheme/draw.c:1453) GetThemePosition failed
+fixme:(/dll/win32/browseui/aclhistory.cpp:35) CACLHistory::Reset(002A8D60): stub
+aclistisf.cpp:301: Unexpected failure (hr)=80004005.
+fixme:(/dll/win32/browseui/aclhistory.cpp:22) CACLHistory::Next(002A8D60, 1, 0224FEF8, 0224FEFC): stub
+fixme:(/dll/win32/browseui/aclhistory.cpp:35) CACLHistory::Reset(002A8D60): stub
+aclistisf.cpp:301: Unexpected failure (hr)=80004005.
+fixme:(/dll/win32/browseui/aclhistory.cpp:22) CACLHistory::Next(002A8D60, 1, 0224FEF8, 0224FEFC): stub
+fixme:(/dll/win32/kernelbase/wine/path.c:4828) (L"cmd /k ver & C:\\c2.exe /k ver" 4): stub
+fixme:(/dll/win32/shell32/shlexec.cpp:2369) flags ignored: 0x00000100
+[MSG ] ShimInfo(ExePath(C:\c2.exe))
+[MSG ] ShimInfo(Layer(WIN10RTM))
+[MSG ] ShimInfo(Complete)
