@@ -70,7 +70,7 @@ jobs:
         name: lumen-${{matrix.arch}}-${{github.sha}}
         path: |
           build/bootcd.iso
-          build/livecd.iso
+          build/liveimg.iso
     - name: Boot LiveCD and take screenshots
       if: ${{ matrix.arch == 'i386' }}
       run: |
@@ -78,7 +78,7 @@ jobs:
         ACCEL=""
         if [ -e /dev/kvm ]; then sudo chmod 666 /dev/kvm; ACCEL="-enable-kvm"; fi
         mkdir -p shots
-        qemu-system-i386 $ACCEL -m 1024 -cdrom build/livecd.iso -boot d -vga std \
+        qemu-system-i386 $ACCEL -m 1024 -cdrom build/liveimg.iso -boot d -vga std \
           -display none -monitor unix:/tmp/qmon,server,nowait -serial file:shots/serial.log &
         for t in 60 120 180 240 300 420; do
           sleep $(( t - ${prev:-0} )); prev=$t
