@@ -261,6 +261,7 @@ BEGIN
     IDS_LAUTUS "现代"
     IDS_LUNAR "月光"
     IDS_MIZU "水流"
+    IDS_LUMEN "Lumen"
 END
 
 STRINGTABLE

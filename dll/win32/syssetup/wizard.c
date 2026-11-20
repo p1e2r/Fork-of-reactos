@@ -2130,6 +2130,7 @@ static struct ThemeInfo
     LPCWSTR ThemeFile;
 
 } Themes[] = {
+    { MAKEINTRESOURCE(IDB_LUMEN), IDS_LUMEN, L"themes\\lumen\\lumen.msstyles" },
     { MAKEINTRESOURCE(IDB_CLASSIC), IDS_CLASSIC, NULL },
     { MAKEINTRESOURCE(IDB_LAUTUS), IDS_LAUTUS, L"themes\\lautus\\lautus.msstyles" },
     { MAKEINTRESOURCE(IDB_LUNAR), IDS_LUNAR, L"themes\\lunar\\lunar.msstyles" },
@@ -2192,6 +2193,8 @@ ThemePageDlgProc(HWND hwndDlg,
             ListView_SetTextBkColor(hListView, CLR_NONE);
             /* Reduce the size between the items */
             ListView_SetIconSpacing(hListView, 190, 173);
+            /* Lumen is the default look: preselect it (this also applies it) */
+            ListView_SetItemState(hListView, 0, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
             break;
         }
 

@@ -263,6 +263,7 @@ BEGIN
     IDS_LAUTUS "Lautus"
     IDS_LUNAR "Lunar"
     IDS_MIZU "Mizu"
+    IDS_LUMEN "Lumen"
 END
 
 STRINGTABLE

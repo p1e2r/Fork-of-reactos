@@ -258,6 +258,7 @@ BEGIN
     IDS_LAUTUS "Тема ""Lautus"""
     IDS_LUNAR "Тема ""Lunar"""
     IDS_MIZU "Тема ""Mizu"""
+    IDS_LUMEN "Lumen"
 END
 
 STRINGTABLE

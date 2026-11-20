@@ -64,7 +64,7 @@ HKCU,"Control Panel\Desktop","ScreenSaverIsSecure",2,"1"
 HKCU,"Control Panel\Desktop","ScreenSaveTimeOut",2,"600"
 HKCU,"Control Panel\Desktop","WaitToKillAppTimeout",2,"20000"
 HKCU,"Control Panel\Desktop","Pattern",2,"(None)"
-HKCU,"Control Panel\Desktop","Wallpaper",0x00000002,""
+HKCU,"Control Panel\Desktop","Wallpaper",0x00000002,"%SystemRoot%\Web\Wallpaper\Lumen.bmp"
 HKCU,"Control Panel\Desktop","TileWallpaper",2,"0"
 HKCU,"Control Panel\Desktop","WallpaperStyle",2,"2"
 HKCU,"Control Panel\Desktop","FontSmoothing",2,"0"
@@ -1898,6 +1898,8 @@ HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced","ListviewShad
 HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced","HideFileExt",0x00010003,0x00000000
 HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced","PreferDateOverWeekday",0x00010003,0x00000001
 HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced","StartMenuLogoff",0x00010003,0x00000001
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced","TaskbarAl",0x00010003,0x00000001
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced","TaskbarSmallIcons",0x00010003,0x00000000
 ; "Hidden" to be changed to 2 if we later want to have "Hide hidden files by default"
 HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced","Hidden",0x00010003,1
 HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced","ShowSuperHidden",0x00010003,0

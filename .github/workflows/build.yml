@@ -1,5 +1,6 @@
 name: Build
-on: [push, pull_request]
+# Lumen fork: the full upstream matrix only runs on demand; lumen-iso.yml builds the ISO on push.
+on: [workflow_dispatch]
 
 jobs:
   build-linux:

@@ -274,6 +274,13 @@ public:
 
         DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | BS_PUSHBUTTON | BS_LEFT | BS_VCENTER;
 
+        /* Lumen: Windows 11-style start button is a centered icon without a label */
+        if (g_TaskbarSettings.bCenterTaskbar)
+        {
+            szStartCaption[0] = UNICODE_NULL;
+            dwStyle = (dwStyle & ~BS_LEFT) | BS_CENTER;
+        }
+
         // HACK & FIXME: CORE-18016
         m_hWnd = CreateWindowEx(
             0,
@@ -1779,21 +1786,25 @@ ChangePos:
             StartSize.cy = HIWORD(size) + (m_Theme ? GetSystemMetrics(SM_CYEDGE) : 0);
         }
 
-        if (m_StartButton.m_hWnd != NULL)
+        /* Lumen: compute the Windows 11-style centered layout. The start button and the
+           task buttons form one group that sits in the middle of the taskbar. */
+        INT xGroup = 0;
+        BOOL bCentered = (g_TaskbarSettings.bCenterTaskbar && Horizontal && hwndTaskToolbar);
+        if (bCentered)
         {
-            /* Resize and reposition the button */
-            dwp = m_StartButton.DeferWindowPos(dwp,
-                                               NULL,
-                                               0,
-                                               0,
-                                               StartSize.cx,
-                                               StartSize.cy,
-                                               SWP_NOZORDER | SWP_NOACTIVATE);
-            if (dwp == NULL)
-            {
-                ERR("DeferWindowPos for start button failed. lastErr=%d\n", GetLastError());
-                return;
-            }
+            DWORD size = SendMessageW(hwndTaskToolbar, TB_GETBUTTONSIZE, 0, 0);
+            INT cxTask = HIWORD(size) + LUMEN_TASKBUTTON_EXTRA;
+            INT cTasks = (INT)SendMessageW(hwndTaskToolbar, TB_BUTTONCOUNT, 0, 0);
+
+            TBMETRICS tbm = { sizeof(tbm), TBMF_BUTTONSPACING };
+            SendMessageW(hwndTaskToolbar, TB_GETMETRICS, 0, (LPARAM)&tbm);
+
+            StartSize.cx = cxTask;
+            if (StartSize.cx > rcClient.right)
+                StartSize.cx = rcClient.right;
+
+            INT cxGroup = StartSize.cx + cTasks * (cxTask + tbm.cxButtonSpacing);
+            xGroup = (rcClient.right - cxGroup) / 2;
         }
 
         /* Determine the size that the tray notification window needs */
@@ -1820,6 +1831,16 @@ ChangePos:
             else
                 ptTrayNotify.y = rcClient.bottom - TraySize.cy;
 
+            /* Lumen: never let the centered group run under the tray */
+            if (bCentered)
+            {
+                INT xMax = ptTrayNotify.x - StartSize.cx - LUMEN_MIN_TASK_AREA;
+                if (xGroup > xMax)
+                    xGroup = xMax;
+                if (xGroup < 0)
+                    xGroup = 0;
+            }
+
             dwp = ::DeferWindowPos(dwp,
                                    m_TrayNotify,
                                    NULL,
@@ -1835,6 +1856,23 @@ ChangePos:
             }
         }
 
+        if (m_StartButton.m_hWnd != NULL)
+        {
+            /* Resize and reposition the button */
+            dwp = m_StartButton.DeferWindowPos(dwp,
+                                               NULL,
+                                               xGroup,
+                                               0,
+                                               StartSize.cx,
+                                               StartSize.cy,
+                                               SWP_NOZORDER | SWP_NOACTIVATE);
+            if (dwp == NULL)
+            {
+                ERR("DeferWindowPos for start button failed. lastErr=%d\n", GetLastError());
+                return;
+            }
+        }
+
         /* Resize/Move the rebar control */
         if (m_Rebar != NULL)
         {
@@ -1845,7 +1883,7 @@ ChangePos:
 
             if (Horizontal)
             {
-                ptRebar.x = StartSize.cx + GetSystemMetrics(SM_CXSIZEFRAME);
+                ptRebar.x = xGroup + StartSize.cx + (bCentered ? 0 : GetSystemMetrics(SM_CXSIZEFRAME));
                 szRebar.cx = ptTrayNotify.x - ptRebar.x;
                 szRebar.cy = rcClient.bottom;
             }
@@ -3150,6 +3188,13 @@ HandleTrayContextMenu:
     }
 
     // TWM_SETZORDER
+    LRESULT OnRealignControls(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+    {
+        /* Lumen: the number of task buttons changed, so the centered group moves */
+        AlignControls(NULL);
+        return 0;
+    }
+
     LRESULT OnSetZOrder(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
     {
         return ::SetWindowPos(m_hWnd, (HWND)wParam, 0, 0, 0, 0,
@@ -3540,6 +3585,7 @@ HandleTrayContextMenu:
         MESSAGE_HANDLER(TWM_DOEXITWINDOWS, OnDoExitWindows)
         MESSAGE_HANDLER(TWM_GETTASKSWITCH, OnGetTaskSwitch)
         MESSAGE_HANDLER(TWM_SETZORDER, OnSetZOrder)
+        MESSAGE_HANDLER(TWM_REALIGNCONTROLS, OnRealignControls)
     ALT_MSG_MAP(1)
     END_MSG_MAP()
 

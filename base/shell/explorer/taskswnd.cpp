@@ -379,7 +379,13 @@ public:
         // HACK & FIXME: CORE-18016
         HWND toolbar = CToolbar::Create(hWndParent, styles);
         m_hWnd = NULL;
-        return SubclassWindow(toolbar);
+        if (!SubclassWindow(toolbar))
+            return FALSE;
+
+        /* Lumen: buttons without BTNS_SHOWTEXT draw only their icon,
+           which gives the Windows 11-style icon-only taskbar */
+        SendMessageW(TB_SETEXTENDEDSTYLE, TBSTYLE_EX_MIXEDBUTTONS, TBSTYLE_EX_MIXEDBUTTONS);
+        return TRUE;
     }
 };
 
@@ -406,6 +412,7 @@ class CTaskSwitchWnd :
     HTHEME m_Theme;
     UINT m_ButtonsPerLine;
     WORD m_ButtonCount;
+    WORD m_LastAlignedButtonCount; /* Lumen */
 
     HIMAGELIST m_ImageList;
 
@@ -432,6 +439,7 @@ public:
         m_Theme(NULL),
         m_ButtonsPerLine(0),
         m_ButtonCount(0),
+        m_LastAlignedButtonCount(0xFFFF),
         m_ImageList(NULL),
         m_IsGroupingEnabled(FALSE),
         m_IsDestroying(FALSE),
@@ -1429,6 +1437,10 @@ public:
                     if (NewBtnSize >(LONG)uiMax)
                         NewBtnSize = uiMax;
 
+                    /* Lumen: Windows 11-style icon-only buttons of a fixed width */
+                    if (g_TaskbarSettings.bCenterTaskbar)
+                        NewBtnSize = m_ButtonSize.cy + LUMEN_TASKBUTTON_EXTRA;
+
                     /* Recalculate how many buttons actually fit into one line */
                     uiBtnsPerLine = rcClient.right / (NewBtnSize + cxButtonSpacing);
                     if (uiBtnsPerLine == 0)
@@ -1447,9 +1459,21 @@ public:
                 {
                     TBBUTTONINFOW tbbi = { 0 };
                     tbbi.cbSize = sizeof(tbbi);
-                    tbbi.dwMask = TBIF_BYINDEX | TBIF_SIZE | TBIF_STATE;
+                    tbbi.dwMask = TBIF_BYINDEX | TBIF_SIZE | TBIF_STATE | TBIF_STYLE;
                     tbbi.cx = (INT) NewBtnSize;
                     tbbi.fsState = TBSTATE_ENABLED;
+
+                    /* Lumen: hide the labels when the taskbar is centered and horizontal.
+                       The window title stays available as the button tooltip. */
+                    {
+                        TBBUTTONINFOW tbbiStyle = { sizeof(tbbiStyle), TBIF_BYINDEX | TBIF_STYLE };
+                        m_TaskBar.GetButtonInfo(ui, &tbbiStyle);
+                        tbbi.fsStyle = tbbiStyle.fsStyle;
+                        if (g_TaskbarSettings.bCenterTaskbar && Horizontal)
+                            tbbi.fsStyle &= ~BTNS_SHOWTEXT;
+                        else
+                            tbbi.fsStyle |= BTNS_SHOWTEXT;
+                    }
 
                     /* Check if we're updating a button that is the last one in the
                        line. If so, we need to set the TBSTATE_WRAP flag! */
@@ -1476,6 +1500,13 @@ public:
             {
                 m_ButtonsPerLine = 0;
                 m_ButtonSize.cx = 0;
+            }
+
+            /* Lumen: tell the tray to re-center the start button and task group */
+            if (g_TaskbarSettings.bCenterTaskbar && m_LastAlignedButtonCount != m_ButtonCount)
+            {
+                m_LastAlignedButtonCount = m_ButtonCount;
+                ::PostMessage(m_Tray->GetHWND(), TWM_REALIGNCONTROLS, 0, 0);
             }
         }
 

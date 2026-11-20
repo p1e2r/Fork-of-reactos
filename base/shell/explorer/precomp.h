@@ -133,6 +133,11 @@ HRESULT WINAPI _CBandSite_CreateInstance(LPUNKNOWN pUnkOuter, REFIID riid, void 
 #define TWM_OPENSTARTMENU (WM_USER + 260)
 #define TWM_SETTINGSCHANGED (WM_USER + 300)
 #define TWM_SETZORDER (WM_USER + 338)
+#define TWM_REALIGNCONTROLS (WM_USER + 339) /* Lumen: task count changed, recenter */
+
+/* Lumen: Windows 11-style taskbar metrics */
+#define LUMEN_TASKBUTTON_EXTRA 8   /* icon-only task buttons are this much wider than tall */
+#define LUMEN_MIN_TASK_AREA    48  /* keep at least this much room for task buttons */
 
 extern const GUID IID_IShellDesktopTray;
 
@@ -225,6 +230,7 @@ struct TaskbarSettings
     BOOL bSmallIcons;
     TrayIconsMode eCompactTrayIcons;
     BOOL bShowDesktopButton;
+    BOOL bCenterTaskbar; /* Lumen: centered, icon-only taskbar (TaskbarAl) */
     TW_STRUCKRECTS2 sr;
 
     BOOL Load();
