@@ -92,7 +92,8 @@ jobs:
           python3 - "$1" > /tmp/keys.txt <<'PY'
         import sys
         m = {' ': 'spc', '\\': 'backslash', '.': 'dot', ',': 'comma', '/': 'slash', '-': 'minus',
-             ':': 'shift-semicolon', '"': 'shift-apostrophe', '@': 'shift-2', '_': 'shift-minus'}
+             ':': 'shift-semicolon', '"': 'shift-apostrophe', '@': 'shift-2', '_': 'shift-minus',
+             '%': 'shift-5', '&': 'shift-7'}
         for c in sys.argv[1]:
             if c in m: print(m[c])
             elif c.isupper(): print('shift-' + c.lower())
@@ -111,6 +112,10 @@ jobs:
         keys esc; sleep 2; keys meta_l; sleep 10; shot 5-startmenu
         typestr note; sleep 5; shot 6-search
         keys esc; sleep 2; keys meta_l; sleep 5
+        # version check: the system cmd sees the real version, a copy outside the Windows folder sees Windows 10
+        keys meta_l-r; sleep 5
+        typestr 'cmd /k ver & copy %SystemRoot%\system32\cmd.exe %USERPROFILE%\c2.exe & %USERPROFILE%\c2.exe /k ver'
+        keys ret; sleep 20; shot 7-version
         kill %1 || true
     - name: Publish screenshots to the screenshots branch
       if: ${{ matrix.arch == 'i386' }}
