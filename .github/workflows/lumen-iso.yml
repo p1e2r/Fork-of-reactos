@@ -87,11 +87,28 @@ jobs:
         sleep 420; shot 1-wizard
         keys ret; sleep 10; keys ret
         sleep 150; shot 2-desktop
+        # type a string through QEMU sendkey
+        typestr() {
+          python3 - "$1" > /tmp/keys.txt <<'PY'
+        import sys
+        m = {' ': 'spc', '\\': 'backslash', '.': 'dot', ',': 'comma', '/': 'slash', '-': 'minus',
+             ':': 'shift-semicolon', '"': 'shift-apostrophe', '@': 'shift-2', '_': 'shift-minus'}
+        for c in sys.argv[1]:
+            if c in m: print(m[c])
+            elif c.isupper(): print('shift-' + c.lower())
+            else: print(c)
+        PY
+          while read -r k; do mon "sendkey $k"; done < /tmp/keys.txt
+        }
+        # live env starts without a visual style: apply Lumen the same way double-clicking the .msstyles does
+        keys meta_l-r; sleep 5
+        typestr 'rundll32.exe shell32.dll,Control_RunDLL desk.cpl desk,@Appearance /Action:ActivateMSTheme /file:"X:\reactos\Resources\Themes\Lumen\lumen.msstyles"'
+        keys ret; sleep 40; shot 3-themed-desktop
         # open Notepad through Run, to show a themed window
-        keys meta_l-r; sleep 5; keys n o t e p a d ret
-        sleep 30; shot 3-window
+        keys meta_l-r; sleep 5; typestr notepad; keys ret
+        sleep 30; shot 4-window
         # start menu
-        keys esc; sleep 2; keys meta_l; sleep 10; shot 4-startmenu
+        keys esc; sleep 2; keys meta_l; sleep 10; shot 5-startmenu
         kill %1 || true
     - name: Publish screenshots to the screenshots branch
       if: ${{ matrix.arch == 'i386' }}
